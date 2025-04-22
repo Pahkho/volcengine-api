@@ -1,0 +1,4 @@
+# 执行以下命令来生成依赖文件
+
+pipreqs . --encoding=utf8 --ignore=.venv
+
