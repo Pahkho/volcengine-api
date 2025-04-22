@@ -1,13 +1,13 @@
-# RAGFLOW-FastAPI服务
+# VOLCENGINE-FastAPI服务
 
 ## 项目结构
 ```tree
-ragflow-fastapi/
+volcengine-fastapi/
 ├── app.py               # 服务入口文件
 ├── config.py            # 应用配置（日志/API密钥等）
 ├── schemas.py           # 数据模型定义
 ├── services/            # 业务逻辑实现
-│   └── ragflowService.py 
+│   └── volcengine.py 
 ├── routers/             # API路由模块
 │   ├── agent.py         # Agent查询路由
 │   └── health.py       # 健康检查路由
