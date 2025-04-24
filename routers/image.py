@@ -16,8 +16,8 @@ async def image_generation(request: ImageGenerationRequest):
     """将自然语言转换为SQL的API端点"""
     visual_service = VisualService()
     # 从配置获取AK/SK
-    visual_service.set_ak('AKLTMGRjY2MzMWE4MDdlNDI5MDg0OGQzZDhiMDUwOWFkOGM')
-    visual_service.set_sk('TkdNd1lqaGhNakptT0ROa05Ea3lZVGc1WmpreVpqUXdOMlE1WVRVeVlUTQ==')
+    visual_service.set_ak(volcengine_config.AK)
+    visual_service.set_sk(volcengine_config.SK)
     
     form = build_request_form(request)
 
