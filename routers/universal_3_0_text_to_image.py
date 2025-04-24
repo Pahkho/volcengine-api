@@ -1,25 +1,24 @@
+import json
 import re
 from typing import Dict, Any
 
 from fastapi import APIRouter, HTTPException
-
+from config import volcengine_config
 from schemas import ImageGenerationResponse, ImageGenerationRequest
 from volcengine import visual
 from volcengine.visual.VisualService import VisualService
 
+from services.volcengineService import sync2async_submit, sync2async_get
+
 router = APIRouter()
 
-@router.post("/text_to_image_3V", response_model= ImageGenerationResponse)
-async def text_to_image_3V(request: ImageGenerationRequest):
+@router.post("/text_to_image_3v", response_model= ImageGenerationResponse)
+async def text_to_image_3v(request: ImageGenerationRequest):
 
-    """将自然语言转换为SQL的API端点"""
-    visual_service = VisualService()
-    # 设置AK/SK，需替换为真实值
-    visual_service.set_ak('AKLTOTc1OWViNTFlN2Y1NDgwZTliM2VmNDc4N2M2ZDE3ODA')
-    visual_service.set_sk('TTJGalpqQmpZVEUyTW1JM05EZzRPRGcxWkdZd09XTmpNelppT1dNME9EQQ==')
+    req_key = request.req_key
 
-    form = {
-        "req_key": request.req_key,
+    request_form = {
+        "req_key": req_key,
         "prompt": request.prompt,
         "width": request.width,
         "height": request.height,
@@ -40,9 +39,17 @@ async def text_to_image_3V(request: ImageGenerationRequest):
 
     try:
         # 2. 发送查询(同步转异步)
-        result = visual_service.cv_sync2async_submit_task(form)
+        result = sync2async_submit(request_form)
+
+        task_form = {
+            "req_key": req_key,
+            "task_id": result,
+            "req_json": json.dumps(request.req_json) if request.req_json else json.dumps({})
+        }
+
+        task_result = sync2async_get(task_form)
         # 3. 构造响应
-        return result
+        return task_result
     except HTTPException as he:
         raise he
     except Exception as e:

@@ -3,7 +3,7 @@ import re
 from typing import Dict, Any
 
 from fastapi import APIRouter, HTTPException
-
+from config import volcengine_config
 from schemas import ImageGenerationResponse, ImageGenerationRequest, TaskRequest
 from volcengine import visual
 from volcengine.visual.VisualService import VisualService
@@ -15,8 +15,8 @@ async def query_task(request: TaskRequest):
 
     visual_service = VisualService()
     # 设置AK/SK，需替换为真实值
-    visual_service.set_ak('AKLTOTc1OWViNTFlN2Y1NDgwZTliM2VmNDc4N2M2ZDE3ODA')
-    visual_service.set_sk('TTJGalpqQmpZVEUyTW1JM05EZzRPRGcxWkdZd09XTmpNelppT1dNME9EQQ==')
+    visual_service.set_ak(volcengine_config.AK)
+    visual_service.set_sk(volcengine_config.SK)
 
     # if request.req_json:
     #     req_json = json.loads(request.req_json)

@@ -19,10 +19,11 @@ app.add_middleware(
 )
 
 # 挂载路由模块
-from routers import health, agent, task
+from routers import health, image, task , universal_2_1_text_to_image
 
-app.include_router(agent.router, prefix="/api")
+app.include_router(image.router, prefix="/api")
 app.include_router(task.router, prefix="/api")
+app.include_router(universal_2_1_text_to_image.router, prefix="/api")
 app.include_router(health.router)
 
 # 启动服务
