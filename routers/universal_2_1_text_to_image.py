@@ -6,6 +6,8 @@ from config import volcengine_config
 from schemas import ImageGenerationResponse, ImageGenerationRequest
 from volcengine import visual
 from volcengine.visual.VisualService import VisualService
+
+from services.polling_service import PollingService
 from services.volcengineService import sync2async_submit, sync2async_get
 import json
 import logging
@@ -48,7 +50,20 @@ async def text_to_image_2v(request: ImageGenerationRequest):
             "req_json": json.dumps(request.req_json) if request.req_json else json.dumps({})
         }
 
-        task_result = sync2async_get(task_form)
+        # 创建轮询服务实例
+        polling_service = PollingService(
+            max_retries=10,  # 最大重试30次
+            retry_interval=2.0  # 每次间隔2秒
+        )
+
+        # 使用轮询服务等待结果
+        task_result = await polling_service.poll_until_complete(
+            query_func=sync2async_get,
+            query_params=task_form,
+            error_message="Image generation task failed"
+        )
+
+        # task_result = sync2async_get(task_form)
         # 3. 构造响应
         return task_result
     except HTTPException as he:
