@@ -3,4 +3,4 @@ pydantic==2.11.3
 python-dotenv==1.0.1
 Requests==2.32.3
 uvicorn==0.34.2
-volcengine==1.0.181
+volcengine==1.0.183

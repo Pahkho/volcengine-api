@@ -47,7 +47,7 @@ async def text_to_image_2v(request: ImageGenerationRequest):
         task_form = {
             "req_key": req_key,
             "task_id": result,
-            "req_json": json.dumps(request.req_json) if request.req_json else json.dumps({})
+            "req_json": json.dumps(request.req_json) if isinstance(request.req_json, dict) else (request.req_json if isinstance(request.req_json, str) else json.dumps({}))
         }
 
         # 创建轮询服务实例
