@@ -34,7 +34,7 @@ async def dreamina_image(request: DreaminaRequest):
             "req_key": "jimeng_high_aes_general_v21_L",
             "task_id": result,
             # "req_json": json.dumps(request.req_json) if isinstance(request.req_json, dict) else (request.req_json if isinstance(request.req_json, str) else json.dumps({}))
-            "req_json": "{\"logo_info\":{\"add_logo\":true,\"position\":0,\"language\":0,\"logo_text_content\":\"这里是明水印内容\"},\"return_url\":true}"
+            "req_json": "{\"logo_info\":{\"add_logo\":true,\"position\":0,\"language\":0,\"logo_text_content\":\"GoldlionAI\"},\"return_url\":true}"
         }
 
         # 创建轮询服务实例

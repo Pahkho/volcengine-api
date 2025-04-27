@@ -1,14 +1,10 @@
-openapi: 3.0.3
+openapi: 3.1.1
 info:
   title: Volcengine FASTAPI代理
   description: Volcengine FASTAPI代理服务,提供文本到图像生成等功能
   version: 1.0.0
   contact:
     name: API Support
-  license:
-    name: MIT
-    url: https://opensource.org/licenses/MIT
-
 servers:
   - url: http://14.116.201.14:9003
     description: Docker容器服务
@@ -79,8 +75,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
-
+                
+  /volcengine/dreaminaImage:
+    post:
+      tags:
+        - image
+      summary: Dreamina图像生成
+      description: 使用即梦AI模型将文本转换为图像，支持高质量图像生成
+      operationId: dreaminaImage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DreaminaRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageGenerationResponse'
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: 请求超时
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -181,6 +208,41 @@ components:
           type: object
           description: 附加请求参数
           example: {}
+
+    DreaminaRequest:
+      type: object
+      required:
+        - prompt
+      properties:
+        prompt:
+          type: string
+          description: 生成图像的提示词
+          example: "一只可爱的猫咪在草地上玩耍"
+        seed:
+          type: integer
+          description: 随机种子
+          default: -1
+          example: -1
+        width:
+          type: integer
+          description: 图像宽度
+          default: 512
+          example: 512
+        height:
+          type: integer
+          description: 图像高度
+          default: 512
+          example: 512
+        use_pre_llm:
+          type: boolean
+          description: 是否使用预训练大语言模型
+          default: true
+          example: true
+        use_sr:
+          type: boolean
+          description: 是否使用超分辨率
+          default: true
+          example: true
 
     ImageGenerationResponse:
       type: object
