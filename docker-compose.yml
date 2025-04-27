@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   volcengine-fastapi:
-    build: .
-    image: volcengine-fastapi:latest  # 指定新的镜像名字和标签
+#    build: .  现在用镜像打包好了 不需要重新构建了
+    image: registry.cn-hangzhou.aliyuncs.com/echohub/volcengine-api  # 指定新的镜像名字和标签
     container_name: volcengine-fastapi # 指定容器名字
     ports:
       - "9002:8000"
