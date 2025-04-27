@@ -1,0 +1,233 @@
+openapi: 3.0.3
+info:
+  title: Volcengine FASTAPI代理
+  description: Volcengine FASTAPI代理服务,提供文本到图像生成等功能
+  version: 1.0.0
+  contact:
+    name: API Support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://14.116.201.14:9003
+    description: Docker容器服务
+
+tags:
+  - name: image
+    description: 图像生成相关接口
+  - name: task
+    description: 任务查询相关接口
+
+paths:
+  /volcengine/text_to_image_2v:
+    post:
+      tags:
+        - image
+      summary: 文本到图像生成 (2.1版本)
+      description: 使用2.1版本模型将文本转换为图像，包含轮询等待结果
+      operationId: textToImage2v
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageGenerationRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageGenerationResponse'
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '408':
+          description: 请求超时
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /volcengine/text_to_image_3v:
+    post:
+      tags:
+        - image
+      summary: 文本到图像生成 (3.0版本)
+      description: 使用3.0版本模型将文本转换为图像
+      operationId: textToImage3v
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageGenerationRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageGenerationResponse'
+        '500':
+          description: 服务器错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+
+components:
+  schemas:
+    ImageGenerationRequest:
+      type: object
+      required:
+        - req_key
+        - prompt
+      properties:
+        req_key:
+          type: string
+          description: 请求唯一标识
+          default: "high_aes_general_v21_L"
+          example: "text-to-image-123"
+        prompt:
+          type: string
+          description: 图像生成提示词
+          example: "一只可爱的猫咪在草地上玩耍"
+        width:
+          type: integer
+          description: 图像宽度
+          default: 512
+          example: 512
+        height:
+          type: integer
+          description: 图像高度
+          default: 512
+          example: 512
+        seed:
+          type: integer
+          description: 随机种子
+          default: -1
+          example: 42
+        model_version:
+          type: string
+          description: 模型版本
+          default: "general_v2.0_L"
+          example: "v2.1"
+        req_schedule_conf:
+          type: string
+          description: 调度配置
+          default: "general_v20_9B_rephraser"
+          example: ""
+        negative_prompt:
+          type: string
+          description: 负面提示词
+          default: "nsfw, nude, smooth skin, unblemished skin, mole, low resolution, blurry, worst quality, mutated hands"
+          example: "模糊, 低质量"
+        scale:
+          type: number
+          format: float
+          description: 缩放比例
+          default: 3.5
+          example: 7.5
+        ddim_steps:
+          type: integer
+          description: DDIM步数
+          default: 16
+          example: 50
+        use_pre_llm:
+          type: boolean
+          description: 是否使用预训练语言模型
+          default: true
+          example: false
+        use_sr:
+          type: boolean
+          description: 是否使用超分辨率
+          default: true
+          example: false
+        sr_seed:
+          type: integer
+          description: 超分辨率随机种子
+          default: -1
+          example: -1
+        is_only_sr:
+          type: boolean
+          description: 是否仅使用超分辨率
+          default: false
+          example: false
+        sr_scale:
+          type: number
+          format: float
+          description: 超分辨率缩放比例
+          default: 3.5
+          example: 2.0
+        sr_steps:
+          type: integer
+          description: 超分辨率步数
+          default: 10
+          example: 50
+        sr_strength:
+          type: number
+          format: float
+          description: 超分辨率强度
+          default: 0.4
+          example: 0.8
+        req_json:
+          type: object
+          description: 附加请求参数
+          example: {}
+
+    ImageGenerationResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: 状态码
+          example: 0
+        message:
+          type: string
+          description: 状态消息
+          example: "success"
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              description: 任务状态
+              enum: [pending, running, done, not_found]
+              example: "done"
+            task_id:
+              type: string
+              description: 任务ID
+              example: "task-456"
+            images:
+              type: array
+              description: 生成的图像列表
+              items:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    description: 图像URL
+                    example: "https://example.com/image.jpg"
+                  width:
+                    type: integer
+                    description: 图像宽度
+                    example: 512
+                  height:
+                    type: integer
+                    description: 图像高度
+                    example: 512
+
+    ErrorResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: 错误详情
+          example: "Internal server error"
