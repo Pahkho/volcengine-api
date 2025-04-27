@@ -52,38 +52,42 @@ class NewResponse(BaseModel):
 
 ### 3.2 添加路由模块
 在 `routers` 目录新建文件（例：` routers/new_feature.py` ）：
+
 ```python
 from fastapi import APIRouter
-from schemas import NewRequest, NewResponse
+from schemas.schemas import NewRequest, NewResponse
 from services import your_service
 
 router = APIRouter(tags=["新功能模块"])
 
-@router.post("/new-endpoint", 
+
+@router.post("/new-endpoint",
              response_model=NewResponse,
              summary="新功能端点",
              description="实现XX业务逻辑的API端点")
 async def new_feature_endpoint(request: NewRequest):
-    """端点功能描述"""
-    result = await your_service.process_data(request)
-    return result
+   """端点功能描述"""
+   result = await your_service.process_data(request)
+   return result
 ```
 
 ### 3.3 实现业务逻辑
 在 `services` 目录新建文件（例： `services/new_service.py` ）
+
 ```python
 from config import logger
-from schemas import NewRequest, NewResponse
+from schemas.schemas import NewRequest, NewResponse
+
 
 async def process_data(request: NewRequest):
-    """核心业务逻辑处理"""
-    try:
-        # 实现业务逻辑
-        processed_data = f"processed: {request.param1}"
-        return NewResponse(result=processed_data)
-    except Exception as e:
-        logger.error(f"处理失败: {str(e)}")
-        return NewResponse(status="error", result=str(e))
+   """核心业务逻辑处理"""
+   try:
+      # 实现业务逻辑
+      processed_data = f"processed: {request.param1}"
+      return NewResponse(result=processed_data)
+   except Exception as e:
+      logger.error(f"处理失败: {str(e)}")
+      return NewResponse(status="error", result=str(e))
 ```
 ### 3.4 注册路由
 在 `app.py` 中添加：

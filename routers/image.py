@@ -1,10 +1,8 @@
-import re
 from typing import Dict, Any
 
 from fastapi import APIRouter, HTTPException
 
-from schemas import ImageGenerationResponse, ImageGenerationRequest
-from volcengine import visual
+from schemas.schemas import ImageGenerationResponse, ImageGenerationRequest
 from volcengine.visual.VisualService import VisualService
 
 from config import volcengine_config

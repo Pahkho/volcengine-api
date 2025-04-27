@@ -1,11 +1,6 @@
-import json
-import re
-from typing import Dict, Any
-
 from fastapi import APIRouter, HTTPException
 from config import volcengine_config
-from schemas import ImageGenerationResponse, ImageGenerationRequest, TaskRequest
-from volcengine import visual
+from schemas.schemas import ImageGenerationResponse, TaskRequest
 from volcengine.visual.VisualService import VisualService
 
 router = APIRouter()
@@ -18,8 +13,8 @@ async def query_task(request: TaskRequest):
     visual_service.set_ak(volcengine_config.AK)
     visual_service.set_sk(volcengine_config.SK)
 
-    # if request.req_json:
-    #     req_json = json.loads(request.req_json)
+    # if schemas.req_json:
+    #     req_json = json.loads(schemas.req_json)
     # else:
     #     req_json = {}
 

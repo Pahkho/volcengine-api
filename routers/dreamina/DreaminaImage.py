@@ -1,13 +1,9 @@
-import re
-from typing import Dict, Any
-
 from fastapi import APIRouter, HTTPException
-from config import volcengine_config
-from schemas import ImageGenerationResponse, ImageGenerationRequest
-from volcengine import visual
-from volcengine.visual.VisualService import VisualService
 
-from services.polling_service import PollingService
+from schemas.DreaminaSchemas import DreaminaRequest
+from schemas.schemas import ImageGenerationResponse
+
+from services.pollingService import PollingService
 from services.volcengineService import sync2async_submit, sync2async_get
 import json
 import logging
@@ -15,29 +11,19 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-@router.post("/text_to_image_2v", response_model= ImageGenerationResponse)
-async def text_to_image_2v(request: ImageGenerationRequest):
+@router.post("/dreaminaImage", response_model= ImageGenerationResponse)
+async def dreamina_image(request: DreaminaRequest):
 
-    req_key = request.req_key
+
 
     request_form = {
-        "req_key": req_key,
+        "req_key": "jimeng_high_aes_general_v21_L",
         "prompt": request.prompt,
+        "seed": request.seed,
         "width": request.width,
         "height": request.height,
-        "seed": request.seed,
-        "model_version": request.model_version,
-        "req_schedule_conf": request.req_schedule_conf,
-        "negative_prompt": request.negative_prompt,
-        "scale": request.scale,
-        "ddim_steps": request.ddim_steps,
         "use_pre_llm": request.use_pre_llm,
-        "use_sr": request.use_sr,
-        "sr_seed": request.sr_seed,
-        "is_only_sr": request.is_only_sr,
-        "sr_scale": request.sr_scale,
-        "sr_steps": request.sr_steps,
-        "sr_strength": request.sr_strength
+        "use_sr": request.use_sr
     }
 
     try:
@@ -45,9 +31,10 @@ async def text_to_image_2v(request: ImageGenerationRequest):
         result = sync2async_submit(request_form)
 
         task_form = {
-            "req_key": req_key,
+            "req_key": "jimeng_high_aes_general_v21_L",
             "task_id": result,
-            "req_json": json.dumps(request.req_json) if isinstance(request.req_json, dict) else (request.req_json if isinstance(request.req_json, str) else json.dumps({}))
+            # "req_json": json.dumps(request.req_json) if isinstance(request.req_json, dict) else (request.req_json if isinstance(request.req_json, str) else json.dumps({}))
+            "req_json": "{\"logo_info\":{\"add_logo\":true,\"position\":0,\"language\":0,\"logo_text_content\":\"这里是明水印内容\"},\"return_url\":true}"
         }
 
         # 创建轮询服务实例
